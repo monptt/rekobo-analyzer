@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>rekobo-analyzer</title>
+        <script>
+            let fileChanged = (input) => {
+                let reader = new FileReader();
+                let file = input.files[0];
+
+                let fileSize = file.size;
+                console.log(fileSize);
+                document.getElementById("file-size").innerHTML = "size: " + fileSize + " byte";
+
+                reader.readAsText(file, 'UTF-8');
+                reader.onload = ()=>{
+                    let text = reader.result;
+                    let textView = document.getElementById("text-view");
+                    textView.innerText = text;
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <h1>
+            rekobo-analyzer
+        </h1>
+        <input type="file" accept=".xml" id="xml_file" onchange="fileChanged(this)">
+
+
+        <h2>information</h2>
+        <div id="information">
+            <div id="file-size"></div>
+        </div>
+
+        <h2>ファイルの中身を表示</h2>
+        <div id="text-view"></div>
+
+    </body>
+</html>
