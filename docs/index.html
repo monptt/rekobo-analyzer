@@ -9,13 +9,27 @@
 
                 let fileSize = file.size;
                 console.log(fileSize);
-                document.getElementById("file-size").innerHTML = "size: " + fileSize + " byte";
+                document.getElementById("file-size").innerHTML = "size: " + Math.round(fileSize / 1024) + " KB";
 
                 reader.readAsText(file, 'UTF-8');
                 reader.onload = ()=>{
-                    let text = reader.result;
-                    let textView = document.getElementById("text-view");
-                    textView.innerText = text;
+                    let xmlStr = reader.result;
+                    document.getElementById("text-view").innerText = xmlStr;
+
+                    // parse
+                    const parser = new DOMParser();
+                    const xmlData = parser.parseFromString(xmlStr, "application/xml");
+
+                    // information
+                    let version = xmlData.getElementsByTagName("PRODUCT")[0].getAttribute("Name") + " " + xmlData.getElementsByTagName("PRODUCT")[0].getAttribute("Version");
+                    document.getElementById("version").innerHTML = version;
+                    
+                    let nTracks = xmlData.getElementsByTagName("COLLECTION")[0].getAttribute("Entries");
+                    document.getElementById("n-tracks").innerHTML = nTracks + " tracks";
+                    
+                    // Playlists
+                    let playlists = xmlData.getElementsByTagName("PLAYLISTS")[0];
+                    
                 }
             }
         </script>
@@ -24,16 +38,21 @@
         <h1>
             rekobo-analyzer
         </h1>
+        ファイル > コレクションをxml形式でエクスポート<br>
         <input type="file" accept=".xml" id="xml_file" onchange="fileChanged(this)">
 
-
-        <h2>information</h2>
+        <h2>Information</h2>
         <div id="information">
             <div id="file-size"></div>
+            <div id="version"></div>
+            <div id="n-tracks"></div>
         </div>
 
-        <h2>ファイルの中身を表示</h2>
-        <div id="text-view"></div>
+        <h2>Playlists</h2>
+        <div id="playlists"></div>
+
+        <h2>XML File</h2>
+        <div id="text-view" style="height:200px; overflow:scroll;"></div>
 
     </body>
 </html>
